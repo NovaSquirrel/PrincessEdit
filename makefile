@@ -1,0 +1,32 @@
+objlist := editor cJSON util draw gui level squirrel
+program_title = editor
+
+CC := gcc
+LD := g++
+
+objdir := obj
+srcdir := src
+objlisto := $(foreach o,$(objlist),$(objdir)/$(o).o)
+
+ifdef LINUX
+  SQUIRREL=../SQUIRREL3
+  CFLAGS := -Wall -O2 -std=gnu99 `sdl2-config --cflags` -I$(SQUIRREL)/include
+  LDLIBS := -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lsquirrel -lsqstdlib -L. -L$(SQUIRREL)/lib
+  LDFLAGS := -Wl
+else
+  CFLAGS := -Wall -O2 -std=gnu99
+  LDLIBS := -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lsquirrel -lsqstdlib
+  LDFLAGS := -Wl,-subsystem,windows
+endif
+
+editor: $(objlisto)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+$(objdir)/%.o: $(srcdir)/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+.PHONY: clean
+
+clean:
+	-rm $(objdir)/*.o

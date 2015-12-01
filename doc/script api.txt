@@ -1,0 +1,73 @@
+api.Num(String, Base)
+Converts String to an integer, of base Base.
+
+api.MessageBox(Message)
+Displays a message in a message box.
+
+api.GetLayerRects(Layer)
+Gets a layer by name and returns it as an array of arrays, with this format:
+[Type string, X, Y, Width, Height, Flags, Extra data]
+Flags: 1 if horizontal flip, 2 if vertical flip, 3 if both
+
+api.ToJSON(Table)
+Converts a table to a string representation and returns it.
+
+api.DecodeJSON(String)
+Converts a string containing JSON to a table and returns it.
+
+api.RegisterExport(Function, String)
+Calls Function when the user attempts to export a level with the export type set to String
+
+api.RegisterMenu(Function, String)
+Adds a menu option named String (unimplemented) and calls Function when the user chooses it.
+
+api.ExportOpen(Filename)
+Opens a new file in the export directory and returns an ID for it.
+
+api.ExportWrite(File ID, String)
+Writes a line containing String to a given file.
+
+api.ExportClose(File ID)
+Closes a file.
+
+api.GetInfo(Info)
+Returns information about the level or editor:
+"filename": the filename of the currently open level
+"numlayers": number of layers in the level
+"width": width of the level
+"height": height of the level
+"cameraX": camera X position
+"cameraY": camera Y position
+
+api.GetLevelInt(Default, Location)
+api.GetLevelStr(Default, Location)
+api.GetLevelTbl(Default, Location)
+Gets an integer, string or table at a given position in the level's JSON.
+Paths are specified with a/b/c/d
+
+api.Interpolate(String, Input, Replacements)
+Replaces placeholders in String with other information.
+Replacements is an array of strings.
+
+Placeholders:
+%a %b %c - looks in Replacements for a string starting with the given character and use the rest of the string
+%1 %2 %3 - first, second or third word of Input
+&1 &2 &3 - first, second or third word of Input and on until the rest of the string
+
+--- Unimplemented commands ---
+api.AskForInput(Message)
+Asks for the user to type a string and returns it.
+
+api.GetLevelJSON()
+api.SetLevelJSON()
+
+api.SetLayerRects(Layer, Array)
+Updates a layer with a new array of rectangles
+
+api.GetLayerMap(Layer, X, Y, Width, Height)
+Gets a rectangle of the level and returns it as a 2D array of integers.
+X, Y, Width and Height are optional
+
+api.SetLayerMap(Layer, X, Y, Width, Height)
+Sets a rectangle of the level to a 2D array of integers.
+X, Y, Width and Height are optional
