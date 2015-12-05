@@ -31,6 +31,7 @@ int TileW = 16, TileH = 16, CameraX = 0, CameraY = 0;
 int CursorX, CursorY, CursorShown = 0;
 int CurLayer = 0, TilePicker = 0;
 int JustToggledTP = 0;
+int GridOn = 1;
 
 LevelRect TmpLevelRect;  // for copying from into the level
 LevelRect *CurLevelRect = NULL; // selected level rectangle
@@ -274,7 +275,7 @@ void StartGUI() {
                 if(CurLevelRect->H < 1) CurLevelRect->H = 1;
                 RedrawMap = 2;
               }
-              AvailableRect = LayerInfos[CurLayer].Map[(NewY-CameraY)*LayerInfos[CurLayer].LayerWidth+(NewX-CameraX)].Rect;
+              AvailableRect = LayerInfos[CurLayer].Map[(NewY+CameraY)*LayerInfos[CurLayer].LayerWidth+(NewX+CameraX)].Rect;
               if(AvailableRect == CurLevelRect)
                 AvailableRect = NULL;
 
@@ -326,13 +327,17 @@ void StartGUI() {
           GUI_SetCursor(SYSCURSOR_NORMAL);
       } else if(e.type == SDL_KEYDOWN) {
         switch(e.key.keysym.sym) { 
-          case SDLK_s:
+          case SDLK_s: // Save
             if(e.key.keysym.mod & KMOD_CTRL)
               SaveLevel();
             break;
-          case SDLK_x:
+          case SDLK_x: // eXport
             if(e.key.keysym.mod & KMOD_CTRL)
               Sq_Export(); 
+            break;
+          case SDLK_b: // Bitmap
+            if(e.key.keysym.mod & KMOD_CTRL)
+              ExportBitmap();
             break;
           case SDLK_INSERT:
             if(!CurLevelRect) {
@@ -440,6 +445,7 @@ void StartGUI() {
           case 'I': if(CurLevelRect && CurLevelRect->H > 1) {CurLevelRect->H--; Redraw = 1; RedrawMap = 2;} break;
           case 'K': if(CurLevelRect) {CurLevelRect->H++; Redraw = 1; RedrawMap = 2;} break;
 
+          case 'G': GridOn ^= 1; Redraw = 1; RedrawMap = 2; break;
           case 'x': if(CurLevelRect) {CurLevelRect->Flips ^= SDL_FLIP_HORIZONTAL; Redraw = 1; RedrawMap = 2;} break;
           case 'y': if(CurLevelRect) {CurLevelRect->Flips ^= SDL_FLIP_VERTICAL; Redraw = 1; RedrawMap = 2;} break;
           case 'Y': if(CurLevelRect) {CurLevelRect->Flips = 0; Redraw = 1; RedrawMap = 2;} break;
@@ -584,13 +590,13 @@ void StartGUI() {
           SDL_RenderDrawRect(ScreenRenderer, &Select);
         }
 
-        if(GridW != 0) {
+        if(GridW && GridOn) {
           SDL_Rect Clip = {MapViewX, MapViewY, MapViewWidthP, MapViewHeightP};
           SDL_RenderSetClipRect(ScreenRenderer, &Clip);
           SDL_SetRenderDrawColor(ScreenRenderer, GridColor.r, GridColor.g, GridColor.b, 255);
           for(int i=0; i*GridW<(MapViewWidth+GridW); i++)
             for(int j=0; j*GridH<(MapViewHeight+GridH); j++) {
-              SDL_Rect GridRect = {MapViewX+(i*GridW-CameraX%GridW)*TileW, (MapViewY+j*GridH-CameraY%GridH)*TileH, GridW*TileW, GridH*TileH};
+              SDL_Rect GridRect = {MapViewX+(i*GridW-CameraX%GridW)*TileW, MapViewY+(j*GridH-CameraY%GridH)*TileH, GridW*TileW, GridH*TileH};
               SDL_RenderDrawRect(ScreenRenderer, &GridRect);
             }
           SDL_RenderSetClipRect(ScreenRenderer, NULL);

@@ -281,6 +281,7 @@ void AutoloadDirectory(const char *Directory);
 SquirrelScript *LoadAddon(const char *Path);
 void UnloadAddon(SquirrelScript *Addon);
 int Sq_Export();
+void ExportBitmap();
 void SaveLevel();
 int PathIsSafe(const char *Path);
 #define ZeroStruct(x) memset(&x, sizeof(x), 0);

@@ -262,3 +262,22 @@ void SaveLevel() {
   fclose(Out);
   free(Rendered);
 }
+
+void ExportBitmap() {
+  // render to a texture
+/*
+  for(int L=0;L<NumLayers;L++)
+    if(!LayerInfos[L].LayerHidden)
+      for(int y=0;y<MapViewHeight;y++)
+        for(int x=0;x<MapViewWidth;x++) {
+          int RealX = x+CameraX, RealY = y+CameraY;
+          LevelTile Tile = LayerInfos[L].Map[RealY*LayerInfos[L].LayerWidth+RealX];
+          if(Tile.Graphic != -1) {
+            if(Tile.Flips == 0)
+              blit(LayerInfos[L].Texture, ScreenRenderer, (Tile.Graphic&255)*TileW, (Tile.Graphic>>8)*TileH, MapViewX+x*TileW, MapViewY+y*TileH, TileW, TileH);
+            else
+              blitf(LayerInfos[L].Texture, ScreenRenderer, (Tile.Graphic&255)*TileW, (Tile.Graphic>>8)*TileH, MapViewX+x*TileW, MapViewY+y*TileH, TileW, TileH, Tile.Flips);
+            }
+          }
+*/
+}
