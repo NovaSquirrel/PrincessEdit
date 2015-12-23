@@ -383,7 +383,7 @@ SQInteger Sq_GetInfo(HSQUIRRELVM v) {
   sq_getstring(v, 2, &What);
 
   if(!strcasecmp(What, "filename"))
-    sq_pushstring(v, LevelFilename, -1);
+    sq_pushstring(v, FilenameOnly(LevelFilename), -1);
   else if(!strcasecmp(What, "numlayers"))
     sq_pushinteger(v, NumLayers);
   else if(!strcasecmp(What, "width"))

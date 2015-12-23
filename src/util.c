@@ -203,5 +203,6 @@ int memcasecmp(const char *Text1, const char *Text2, int Length) {
 const char *FilenameOnly(const char *Path) {
   const char *Temp = strrchr(Path, '/');
   if(!Temp) Temp = strrchr(Path, '\\');
-  return Path;
+  if(!Temp) return Path;
+  return Temp+1;
 }

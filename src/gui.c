@@ -462,8 +462,10 @@ void StartGUI() {
               }
             }
         }
-        if(OldLayer != CurLayer)
+        if(OldLayer != CurLayer) {
           CurLevelRect = NULL;
+          TmpLevelRect.Flips = 0;
+        }
       } else if(e.type == SDL_WINDOWEVENT) {
         switch(e.window.event) {
           case SDL_WINDOWEVENT_SIZE_CHANGED:
