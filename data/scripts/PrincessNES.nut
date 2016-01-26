@@ -11,7 +11,7 @@ local RectRules = [
   {"T":"GROUND_CLIMB_R", "W":1,   "H":1,  "O": "LObj  LO::S_GROUND_CLIMB_R, &X, &Y"},
   {"T":"BRICKS",         "W":1,   "H":1,  "O": "LObj  LO::S_BRICK,          &X, &Y"},
   {"T":"BRICKS",         "W":16,  "H":16, "O": "LObjN LO::R_BRICK,          &X, &Y, &W, &H"},
-  {"T":"BRICKS",         "W":256, "H":16, "O": "LobjN LO::RECT_1,           &X, &Y, &H, LN1::BRICKS, &W"},
+  {"T":"BRICKS",         "W":256, "H":16, "O": "LObjN LO::RECT_1,           &X, &Y, &H, LN1::BRICKS, &W"},
   {"T":"SOLID_BLOCK",    "W":1,   "H":1,  "O": "LObj  LO::S_SOLID_BLOCK,    &X, &Y"},
   {"T":"SOLID_BLOCK",    "W":16,  "H":16, "O": "LObjN LO::R_SOLID_BLOCK,    &X, &Y, &W, &H"},
   {"T":"SOLID_BLOCK",    "W":256, "H":16, "O": "LObjN LO::RECT_1,           &X, &Y, &H, LN1::SOLID_BLOCK, &W"},
@@ -24,15 +24,15 @@ local RectRules = [
   {"T":"COIN",           "W":16,  "H":16, "O": "LObjN LO::R_COIN,           &X, &Y, &W, &H"},
   {"T":"SPRING",         "W":1,   "H":1,  "O": "LObj  LO::S_SPRING,         &X, &Y"},
   {"T":"ROCK_GROUND",    "W":16,  "H":16, "O": "LObjN LO::R_ROCK,           &X, &Y, &W, &H"},
-  {"T":"ROCK_GROUND",    "W":256, "H":16, "O": "LobjN LO::RECT_1,           &X, &Y, &H, LN1::ROCK, &W"},
+  {"T":"ROCK_GROUND",    "W":256, "H":16, "O": "LObjN LO::RECT_1,           &X, &Y, &H, LN1::ROCK, &W"},
   {"T":"SMALL_ROCK",     "W":1,   "H":1,  "O": "LObj  LO::R_SOLID_ROCK,     &X, &Y"},
   {"T":"SOLID_LEDGE",    "W":16,  "H":1,  "O": "LObjN LO::WIDE_1,           &X, &Y, &W, LN1::SOLID_LEDGE"},
   {"T":"SOLID_LEDGE",    "W":256, "H":1,  "O": "LObjN LO::RECT_1,           &X, &Y, &W, LN1::SOLID_LEDGE, &W"},
   {"T":"FALLTHROUGH_LEDGE", "W":16, "H":1,"O": "LObjN LO::WIDE_1,           &X, &Y, &W, LN1::FALLTHROUGH_LEDGE"},
   {"T":"FALLTHROUGH_LEDGE", "W":256, "H":1,"O": "LObjN LO::RECT_1,           &X, &Y, &W, LN1::FALLTHROUGH_LEDGE, &W"},
   {"T":"SIGNPOST",       "W":1,   "H":1,  "O": "LObj  LO::S_SIGNPOST,       &X, &Y"},
-  {"T":"WATER",          "W":16,  "H":16, "O": "LobjN LO::R_WATER,          &X, &Y, &W, &H"},
-  {"T":"WATER",          "W":256, "H":16, "O": "LobjN LO::RECT_1,           &X, &Y, &H, LN1::WATER, &W"},
+  {"T":"WATER",          "W":16,  "H":16, "O": "LObjN LO::R_WATER,          &X, &Y, &W, &H"},
+  {"T":"WATER",          "W":256, "H":16, "O": "LObjN LO::RECT_1,           &X, &Y, &H, LN1::WATER, &W"},
   {"T":"LADDER",         "W":1,   "H":16, "O": "LObjN LO::TALL_1,           &X, &Y, &H, LN1::LADDER"},
   {"T":"SPIKES",         "W":16,  "H":1,  "O": "LObjN LO::WIDE_1,           &X, &Y, &W, LN1::SPIKES"},
   {"T":"DOOR",           "W":1,   "H":1,  "O": "LObj  LO::S_DOOR,           &X, &Y"},
@@ -122,7 +122,7 @@ function PrincessExport() {
 
   api.ExportWrite(File, "  .byt MusicTracks::"+Header.Music+"|"+FacingLeft);
   api.ExportWrite(File, "  .byt "+StartX);
-  api.ExportWrite(File, "  .byt "+Hex((((Width/16)-1)<<4) + StartY));
+  api.ExportWrite(File, "  .byt "+Hex((((Width/16)-1)<<4) | (StartY-1)));
 
   // write sprite graphics slots
   for(local i=0; i<4; i++)
@@ -170,7 +170,7 @@ function PrincessExport() {
     }
     LastX = R[1];
 
-    api.ExportWrite(File, "  "+api.Interpolate(RectRules[Rule].O, "", ["X"+XDifference, "Y"+R[2], "W"+R[3], "H"+R[4], "T"+R[0]]));
+    api.ExportWrite(File, "  "+api.Interpolate(RectRules[Rule].O, "", ["X"+XDifference, "Y"+R[2], "W"+(R[3]-1), "H"+(R[4]-1), "T"+R[0]]));
   }
   api.ExportWrite(File, "  LFinished");
 
