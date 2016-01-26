@@ -66,8 +66,11 @@ LevelRect *JSONtoLevelRect(cJSON *JSON, int Layer) {
   Out->W = Out->H = 1;
   cJSON *Try;
 
-  if((Try = cJSON_GetObjectItem(JSON, "Id")))
+  if((Try = cJSON_GetObjectItem(JSON, "Id"))) {
     Out->Type = TilesetLookupStringToIndex(Layer, Try->valuestring);
+    if(Out->Type == -1)
+      SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Unknown block type name: %s", Try->valuestring);
+  }
   if((Try = cJSON_GetObjectItem(JSON, "X")))
     Out->X = Try->valueint;
   if((Try = cJSON_GetObjectItem(JSON, "Y")))
