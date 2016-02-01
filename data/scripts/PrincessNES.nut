@@ -100,9 +100,15 @@ function PrincessExport() {
 
   // sort layers by X position
   // later: actually take Z ordering into consideration for the FG layer
-  FG.sort(@(a,b) a[1] <=> b[1]);
-  SP.sort(@(a,b) a[1] <=> b[1]);
-  CT.sort(@(a,b) a[1] <=> b[1]);
+  // for now, Y position is used
+  function SortRects(A, B) {
+    local test1 = (A[1]<<8)|A[2];
+    local test2 = (B[1]<<8)|B[2];
+    return test1 <=> test2;
+  }
+  FG.sort(SortRects);
+  SP.sort(SortRects);
+  CT.sort(SortRects);
 
   // open the output file
   local Filename = split(api.GetInfo("filename"), ".")[0];
