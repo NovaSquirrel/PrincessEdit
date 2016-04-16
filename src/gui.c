@@ -29,8 +29,8 @@ FontSet MainFont, TinyFont;
 int MapViewX = 10, MapViewY = 10, MapViewWidth = 20, MapViewHeight = 20, MapViewWidthP, MapViewHeightP;
 int TileW = 16, TileH = 16, CameraX = 0, CameraY = 0;
 int CursorX, CursorY, CursorShown = 0;
-int CurLayer = 0, TilePicker = 0;
-int JustToggledTP = 0;
+int CurLayer = 0, TilePicker = 0, TileOptions = 0;
+int JustToggledTP = 0, JustToggledOptions = 0;
 int GridOn = 1;
 
 LevelRect TmpLevelRect;  // for copying from into the level
@@ -46,6 +46,13 @@ int WhatCursor = 0;
 int DraggingMove = 0;
 int DraggingSelect = 0;
 int DraggingResize = 0; int ResizeUp=0, ResizeLeft=0, ResizeRight=0, ResizeDown=0;
+
+const char *RectangleTypeNames[] = {
+  "Simple",
+  "Slope",
+  "Bitmap",
+  "Custom"
+};
 
 void GUI_SetCursor(int CursorNum) {
   if(CursorNum != WhatCursor)
@@ -449,7 +456,8 @@ void StartGUI() {
           case 'x': if(CurLevelRect) {CurLevelRect->Flips ^= SDL_FLIP_HORIZONTAL; Redraw = 1; RedrawMap = 2;} break;
           case 'y': if(CurLevelRect) {CurLevelRect->Flips ^= SDL_FLIP_VERTICAL; Redraw = 1; RedrawMap = 2;} break;
           case 'Y': if(CurLevelRect) {CurLevelRect->Flips = 0; Redraw = 1; RedrawMap = 2;} break;
-          case 'e': TilePicker ^= 1; Redraw = 1; JustToggledTP = 1; break;
+          case 'e': if(TileOptions) break; TilePicker ^= 1; Redraw = 1; JustToggledTP = 1; break;
+          case 'r': if(TilePicker) break; TileOptions ^= 1; Redraw = 1; JustToggledOptions = 1; break;
 
           default:
             TempPtr = strchr(ShiftNumbers, *e.text.text);
@@ -585,6 +593,13 @@ void StartGUI() {
           SDL_SetRenderDrawColor(ScreenRenderer, SelectColor.r, SelectColor.g, SelectColor.b, 255);
           SDL_Rect Select = MakeSelectRect(CurLevelRect, 8);
           SDL_RenderDrawRect(ScreenRenderer, &Select);
+
+          if(LayerInfos[CurLayer].Type == LAYER_SPRITE) {
+            if(CurLevelRect->Flips == SDL_FLIP_HORIZONTAL)
+              SDL_RenderDrawLine(ScreenRenderer, Select.x-1, Select.y+Select.h/2, Select.x-10, Select.y+Select.h/2);
+            else
+              SDL_RenderDrawLine(ScreenRenderer, Select.x+Select.w, Select.y+Select.h/2, Select.x+Select.w+11, Select.y+Select.h/2);
+          }
         }
         if(AvailableRect) {
           SDL_SetRenderDrawColor(ScreenRenderer, AvailableColor.r, AvailableColor.g, AvailableColor.b, 255);

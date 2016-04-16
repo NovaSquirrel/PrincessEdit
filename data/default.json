@@ -7,7 +7,7 @@
     "TileWidth": 16,
     "TileHeight": 16,
     "GridWidth": 16,
-    "GridHeight": 16,
+    "GridHeight": 15,
     "ExportFormat": "PrincessNES",
     "FormatVersion": 1
   },

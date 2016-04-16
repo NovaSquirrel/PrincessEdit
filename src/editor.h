@@ -53,7 +53,7 @@ enum FontVersion {
 //////////////////// editor-specific stuff ///////////////////
 typedef struct LevelRect {
   short Type, X, Y, W, H;
-  char Flips;
+  char Flips, RectType;
   char *ExtraInfo; // stored as a series of JSON values; "a":1, "b":2, etc. maybe a cJSON list instead?
   struct LevelRect *Prev, *Next;
 } LevelRect;
@@ -75,6 +75,13 @@ enum LayerTypes {
   LAYER_SPRITE,
   LAYER_TILEMAP,
   LAYER_CONTROL
+};
+
+enum RectTypes {
+  RECT_SIMPLE,
+  RECT_SLOPE,
+  RECT_BITMAP,
+  RECT_COMPLEX,
 };
 
 typedef struct LayerInfo {

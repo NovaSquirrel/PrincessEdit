@@ -389,7 +389,7 @@ SQInteger Sq_GetInfo(HSQUIRRELVM v) {
   else if(!strcasecmp(What, "width"))
     sq_pushinteger(v, LevelW);
   else if(!strcasecmp(What, "height"))
-    sq_pushinteger(v, LevelW);
+    sq_pushinteger(v, LevelH);
   else if(!strcasecmp(What, "cameraX"))
     sq_pushinteger(v, CameraX);
   else if(!strcasecmp(What, "cameraY"))
