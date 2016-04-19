@@ -547,9 +547,16 @@ void StartGUI() {
         SDL_SetRenderDrawColor(ScreenRenderer, BGColor.r, BGColor.g, BGColor.b, 255);
         SDL_RenderClear(ScreenRenderer);
 
-        char Temp[256];
-        sprintf(Temp, "Layer %i (%s)", CurLayer+1, LayerInfos[CurLayer].Name);
-        RenderSimpleText(ScreenRenderer, &MainFont, 5, 5+MainFont.Height*0, 0, Temp);
+        char Temp3[256];
+        sprintf(Temp3, "Layer %i (%s)", CurLayer+1, LayerInfos[CurLayer].Name);
+        if(LayerInfos[CurLayer].Type == LAYER_SPRITE) {
+          int Total = 0;
+          for(LevelRect *R = LayerInfos[CurLayer].Rects; R; R=R->Next)
+            Total++;
+          sprintf(Temp, " Count: %i", Total);
+          strcat(Temp3, Temp);
+        }
+        RenderSimpleText(ScreenRenderer, &MainFont, 5, 5+MainFont.Height*0, 0, Temp3);
         if(CurLevelRect) {
           char Temp2[10] = "";
           if(CurLevelRect->W + CurLevelRect->H != 2)
