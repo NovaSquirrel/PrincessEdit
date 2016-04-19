@@ -1,5 +1,4 @@
 /*
-
  * PrincessEdit
  *
  * Copyright (C) 2015 NovaSquirrel
@@ -25,7 +24,7 @@ SDL_Texture *PrincessIcon = NULL;
 SDL_Surface *WindowIcon = NULL;
 int ScreenWidth = 800, ScreenHeight = 600;
 int Redraw = 1, RedrawMap = 1;
-FontSet MainFont, TinyFont;
+FontSet MainFont, TinyFont, VeryTinyFont;
 int MapViewX = 10, MapViewY = 10, MapViewWidth = 20, MapViewHeight = 20, MapViewWidthP, MapViewHeightP;
 int TileW = 16, TileH = 16, CameraX = 0, CameraY = 0;
 int CursorX, CursorY, CursorShown = 0;
@@ -225,6 +224,8 @@ void StartGUI() {
   if (!Load_FontSet(&MainFont, 14, "data/font/font.ttf", "data/font/fontb.ttf", "data/font/fonti.ttf", "data/font/fontbi.ttf"))
     return;
   if (!Load_FontSet(&TinyFont, 10, "data/font/font.ttf", "data/font/fontb.ttf", "data/font/fonti.ttf", "data/font/fontbi.ttf"))
+    return;
+  if (!Load_FontSet(&VeryTinyFont, 8, "data/font/font.ttf", "data/font/fontb.ttf", "data/font/fonti.ttf", "data/font/fontbi.ttf"))
     return;
   LoadTilesets();
 
@@ -458,7 +459,20 @@ void StartGUI() {
           case 'Y': if(CurLevelRect) {CurLevelRect->Flips = 0; Redraw = 1; RedrawMap = 2;} break;
           case 'e': if(TileOptions) break; TilePicker ^= 1; Redraw = 1; JustToggledTP = 1; break;
           case 'r': if(TilePicker) break; TileOptions ^= 1; Redraw = 1; JustToggledOptions = 1; break;
-
+          case 'f':
+            if(CurLevelRect) {
+              *Temp = 0;
+              if(CurLevelRect->ExtraInfo) {
+                strcpy(Temp, CurLevelRect->ExtraInfo);
+                free(CurLevelRect->ExtraInfo);
+                CurLevelRect->ExtraInfo = NULL;
+              }
+              InputLine("Rectangle extra info", Temp, sizeof(Temp));
+              if(*Temp)
+                CurLevelRect->ExtraInfo = strdup(Temp);
+              Redraw = 1;
+            }
+            break;
           default:
             TempPtr = strchr(ShiftNumbers, *e.text.text);
             if(TempPtr) {

@@ -65,7 +65,10 @@ void Sq_PrintFunc(HSQUIRRELVM v,const SQChar *s,...) {
 void Sq_ErrorFunc(HSQUIRRELVM v,const SQChar *s,...) {
   va_list vl;
   va_start(vl, s);
-  SDL_LogMessageV(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_CRITICAL, s, vl);
+  char Buffer[4096];
+  vsprintf(Buffer, s, vl);
+//  SDL_LogMessageV(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_CRITICAL, s, vl);
+  SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "script error", Buffer, NULL);
   va_end(vl);
 }
 
@@ -83,8 +86,18 @@ int FindLayerByName(const char *Name) {
   return -1;
 }
 
+extern int Redraw;
 SQInteger Sq_AskForInput(HSQUIRRELVM v) {
-  return 0;
+  char Buffer[4096];
+  *Buffer = 0;
+  const SQChar *Prompt;
+  sq_getstring(v, 2, &Prompt);
+  Redraw = 1;
+  if(InputLine(Prompt, Buffer, sizeof(Buffer)))
+    sq_pushstring(v, Buffer, -1);
+  else
+    sq_pushnull(v);
+  return 1;
 }
 
 SQInteger Sq_GetLevelJSON(HSQUIRRELVM v) {
@@ -180,7 +193,10 @@ SQInteger Sq_GetLayerRects(HSQUIRRELVM v) {
     sq_arrayappend(v, -2);
     sq_pushinteger(v, ((Rect->Flips&SDL_FLIP_HORIZONTAL)!=0)|(((Rect->Flips&SDL_FLIP_VERTICAL)!=0)<<1));
     sq_arrayappend(v, -2);
-    sq_newtable(v); // layer, try to parse the ExtraInfo
+    if(Rect->ExtraInfo)
+      sq_pushstring(v, Rect->ExtraInfo, -1);
+    else
+      sq_pushnull(v);
     sq_arrayappend(v, -2);
     sq_arrayappend(v, -2);
   }

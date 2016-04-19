@@ -65,7 +65,9 @@ LevelRect *JSONtoLevelRect(cJSON *JSON, int Layer) {
     return NULL;
   Out->W = Out->H = 1;
   cJSON *Try;
-
+  if((Try = cJSON_GetObjectItem(JSON, "Extra"))) {
+    Out->ExtraInfo = strdup(Try->valuestring);
+  }
   if((Try = cJSON_GetObjectItem(JSON, "Id"))) {
     Out->Type = TilesetLookupStringToIndex(Layer, Try->valuestring);
     if(Out->Type == -1)
@@ -169,6 +171,8 @@ int UpdateJSONFromLevel() {
         cJSON_AddItemToObject(New, "XFlip", cJSON_CreateTrue());
       if((Rect->Flips&SDL_FLIP_VERTICAL)!=0)
         cJSON_AddItemToObject(New, "YFlip", cJSON_CreateTrue());
+      if(Rect->ExtraInfo)
+        cJSON_AddItemToObject(New, "Extra", cJSON_CreateString(Rect->ExtraInfo));
       if(!Prev) {
         Data->child = New;
       } else {

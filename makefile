@@ -1,4 +1,4 @@
-objlist := editor cJSON util draw gui level squirrel
+objlist := editor cJSON util draw gui level squirrel dialogs
 program_title = editor
 
 CC := gcc

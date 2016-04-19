@@ -54,7 +54,7 @@ enum FontVersion {
 typedef struct LevelRect {
   short Type, X, Y, W, H;
   char Flips, RectType;
-  char *ExtraInfo; // stored as a series of JSON values; "a":1, "b":2, etc. maybe a cJSON list instead?
+  char *ExtraInfo;
   struct LevelRect *Prev, *Next;
 } LevelRect;
 
@@ -291,6 +291,8 @@ int Sq_Export();
 void ExportBitmap();
 void SaveLevel();
 int PathIsSafe(const char *Path);
+char *InputLine(const char *Prompt, char *Buffer, int BufferSize);
+
 #define ZeroStruct(x) memset(&x, sizeof(x), 0);
 
 // Squirrel
@@ -324,6 +326,8 @@ extern int TileW;
 extern int TileH;
 extern int CameraX;
 extern int CameraY;
+extern int ScreenWidth, ScreenHeight;
+extern SDL_Renderer *ScreenRenderer;
 
 extern SDL_Color FGColor;
 extern SDL_Color BGColor;

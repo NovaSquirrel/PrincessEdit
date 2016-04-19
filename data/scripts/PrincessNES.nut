@@ -96,7 +96,7 @@ function PrincessExport() {
   local Boundaries = 0;
   function SetBoundaryAt(Screen) {
     if(Screen < 1) return;
-    if(Screen > 15) return;
+    if(Screen > 16) return;
     local Bit = 1 << 16-Screen;
     Boundaries = Boundaries | Bit;
   }
