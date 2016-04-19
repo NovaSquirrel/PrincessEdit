@@ -103,8 +103,12 @@ cJSON *cJSON_Load(const char *Filename) {
   char *Buffer = ReadTextFile(Filename);
   cJSON *JSON = cJSON_Parse(Buffer);
   free(Buffer);
-  if(!JSON)
+  if(!JSON) {
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "%s failed to load", Filename);
+    char Temp[100];
+    strlcpy(Temp, cJSON_GetErrorPtr(), sizeof(Temp));
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Error pointer: %s", Temp);
+  }
   return JSON;
 }
 
