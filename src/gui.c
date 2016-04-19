@@ -254,6 +254,10 @@ void StartGUI() {
           if(DraggingResize || IsInsideRect(e.motion.x, e.motion.y, MapViewX, MapViewY, MapViewWidthP, MapViewHeightP)) {
             int NewX = (e.motion.x - MapViewX) / TileW;
             int NewY = (e.motion.y - MapViewY) / TileH;
+            if((e.motion.x - MapViewX) % TileW > TileW/2)
+              NewX++;
+            if((e.motion.y - MapViewY) % TileH > TileH/2)
+              NewY++;
             if(NewY < 0) continue;
             if(NewX != CursorX || NewY != CursorY || !CursorShown) {
               Redraw = 1;
