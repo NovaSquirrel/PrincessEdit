@@ -62,13 +62,15 @@ void Sq_PrintFunc(HSQUIRRELVM v,const SQChar *s,...) {
   va_end(vl);
 }
 
+char ErrorBuffer[8192] = "";
 void Sq_ErrorFunc(HSQUIRRELVM v,const SQChar *s,...) {
   va_list vl;
   va_start(vl, s);
   char Buffer[4096];
   vsprintf(Buffer, s, vl);
 //  SDL_LogMessageV(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_CRITICAL, s, vl);
-  SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "script error", Buffer, NULL);
+  strcat(ErrorBuffer, Buffer);
+//  SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "script error", Buffer, NULL);
   va_end(vl);
 }
 

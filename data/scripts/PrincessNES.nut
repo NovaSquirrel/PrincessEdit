@@ -2,6 +2,8 @@
 LWriteCol Col1, Col2, Col3
 */
 
+local ColDataPointerTypes = ["SIGNPOST"]; // list of object types whose extra data is a pointer
+
 local RectRules = [
   {"T":"EMPTY",          "W":16,  "H":16, "O": "LObjN LO::R_AIR,            &X, &Y, &W, &H"},
   {"T":"GROUND",         "W":1,   "H":1,  "O": "LObj  LO::S_GROUND,         &X, &Y"},
@@ -82,6 +84,7 @@ function PrincessExport() {
   local SP = api.GetLayerRects("Sprites");
   local CT = api.GetLayerRects("Control");
   local Header = api.GetLevelTbl("Header");
+  local Config = api.GetLevelTbl("Config");
   if(SP.len() > 84) {
     print("Too many sprites! You have "+(SP.len()-84)+" too many.");
     return false;
@@ -210,6 +213,14 @@ function PrincessExport() {
   api.ExportWrite(File, "");
   api.ExportWrite(File, Filename+"Data:");
 
+  // write any config stuff if present
+  if(Config) {
+    if("StartDialog" in Config)
+      api.ExportWrite(File, "  .byt LSpecialCmd, LevelSpecialConfig::SET_START_DIALOG, <"+Config.StartDialog+", >"+Config.StartDialog);
+    if("EndDialog" in Config)
+      api.ExportWrite(File, "  .byt LSpecialCmd, LevelSpecialConfig::SET_END_DIALOG, <"+Config.EndDialog+", >"+Config.EndDialog);
+  }
+
   // write all the lines for the level FG
   local LastX = 0;
   foreach(R in FG) {
@@ -234,6 +245,8 @@ function PrincessExport() {
     LastX = R[RX];
 
     api.ExportWrite(File, "  "+api.Interpolate(RectRules[Rule].O, "", ["X"+XDifference, "Y"+R[RY], "W"+(R[RW]-1), "H"+(R[RH]-1), "T"+R[RTYPE]]));
+    if(ColDataPointerTypes.find(R[RTYPE]) != null && R[REXTRA] && R[REXTRA].len())
+      api.ExportWrite(File, "  LWriteCol <"+R[REXTRA]+", >"+R[REXTRA]);
   }
   api.ExportWrite(File, "  LFinished");
 

@@ -31,6 +31,7 @@ int CursorX, CursorY, CursorShown = 0;
 int CurLayer = 0, TilePicker = 0, TileOptions = 0;
 int JustToggledTP = 0, JustToggledOptions = 0;
 int GridOn = 1;
+extern char ErrorBuffer[8192];
 
 LevelRect TmpLevelRect;  // for copying from into the level
 LevelRect *CurLevelRect = NULL; // selected level rectangle
@@ -164,6 +165,8 @@ void GUIClick(int Button) {
           New->Next = NULL;
           New->X = RealX;
           New->Y = RealY;
+          if(New->ExtraInfo)
+            New->ExtraInfo = strdup(New->ExtraInfo);
 
           if(End)
             End->Next = New;
@@ -254,10 +257,10 @@ void StartGUI() {
           if(DraggingResize || IsInsideRect(e.motion.x, e.motion.y, MapViewX, MapViewY, MapViewWidthP, MapViewHeightP)) {
             int NewX = (e.motion.x - MapViewX) / TileW;
             int NewY = (e.motion.y - MapViewY) / TileH;
-            if((e.motion.x - MapViewX) % TileW > TileW/2)
-              NewX++;
-            if((e.motion.y - MapViewY) % TileH > TileH/2)
-              NewY++;
+//            if((e.motion.x - MapViewX) % TileW > TileW/2)
+//              NewX++;
+//            if((e.motion.y - MapViewY) % TileH > TileH/2)
+//              NewY++;
             if(NewY < 0) continue;
             if(NewX != CursorX || NewY != CursorY || !CursorShown) {
               Redraw = 1;
@@ -344,8 +347,11 @@ void StartGUI() {
               SaveLevel();
             break;
           case SDLK_x: // eXport
+            ErrorBuffer[0] = 0;
             if(e.key.keysym.mod & KMOD_CTRL)
               Sq_Export(); 
+            if(ErrorBuffer[0])
+              SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "script error", ErrorBuffer, NULL);
             break;
           case SDLK_b: // Bitmap
             if(e.key.keysym.mod & KMOD_CTRL)
