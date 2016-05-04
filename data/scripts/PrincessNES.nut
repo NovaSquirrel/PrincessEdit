@@ -217,8 +217,6 @@ function PrincessExport() {
   if(Config) {
     if("StartDialog" in Config)
       api.ExportWrite(File, "  .byt LSpecialCmd, LevelSpecialConfig::SET_START_DIALOG, <"+Config.StartDialog+", >"+Config.StartDialog);
-    if("EndDialog" in Config)
-      api.ExportWrite(File, "  .byt LSpecialCmd, LevelSpecialConfig::SET_END_DIALOG, <"+Config.EndDialog+", >"+Config.EndDialog);
   }
 
   // write all the lines for the level FG
@@ -245,8 +243,40 @@ function PrincessExport() {
     LastX = R[RX];
 
     api.ExportWrite(File, "  "+api.Interpolate(RectRules[Rule].O, "", ["X"+XDifference, "Y"+R[RY], "W"+(R[RW]-1), "H"+(R[RH]-1), "T"+R[RTYPE]]));
-    if(ColDataPointerTypes.find(R[RTYPE]) != null && R[REXTRA] && R[REXTRA].len())
-      api.ExportWrite(File, "  LWriteCol <"+R[REXTRA]+", >"+R[REXTRA]);
+
+    // Add extra data
+    if(R[REXTRA] && R[REXTRA].len()) {
+      local Dashes = split(R[REXTRA], "-");
+      local Commas = split(R[REXTRA], ",");
+      if(ColDataPointerTypes.find(R[RTYPE]) != null)
+        api.ExportWrite(File, "  LWriteCol <"+R[REXTRA]+", >"+R[REXTRA]);
+      switch(R[RTYPE]) {
+        case "DOOR":
+          if(Dashes.len() == 2) {
+            local Found = false;
+            foreach(R2 in FG)
+              if(R2[RTYPE]=="DOOR") {
+                local Dashes2 = split(R2[REXTRA], "-");
+                if(Dashes2.len() == 2 && Dashes2[0]==Dashes[1]) {
+                  api.ExportWrite(File, "  LWriteCol "+R2[RY]+", "+R2[RX]);
+                  Found = true;
+                }
+              }
+            if(!Found)
+              api.MessageBox("Destination door "+Dashes[1]+" not found");
+         } else if(Commas.len() == 2) {
+           api.ExportWrite(File, "  LWriteCol "+Commas[0]+", "+Commas[1]);
+         } else if(Commas.len() == 3) {
+           api.ExportWrite(File, "  LWriteCol $10|"+Commas[0]+", "+Commas[1]+", "+Commas[2]);
+         } else if(R[REXTRA][0] == '*'){
+           api.ExportWrite(File, "  LWriteCol $20, <"+R[REXTRA].slice(1)+", >"+R[REXTRA].slice(1));
+         } else {
+           api.MessageBox("Bad door data: "+R[REXTRA]);
+         }
+         break;
+      }
+
+    }
   }
   api.ExportWrite(File, "  LFinished");
 
