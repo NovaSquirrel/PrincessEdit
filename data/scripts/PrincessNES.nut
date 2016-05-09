@@ -270,6 +270,7 @@ function PrincessExport() {
            api.ExportWrite(File, "  LWriteCol $10|"+Commas[0]+", "+Commas[1]+", "+Commas[2]);
          } else if(R[REXTRA][0] == '*'){
            api.ExportWrite(File, "  LWriteCol $20, <"+R[REXTRA].slice(1)+", >"+R[REXTRA].slice(1));
+         } else if(Commas.len() == 1 && Dashes.len() == 1) {
          } else {
            api.MessageBox("Bad door data: "+R[REXTRA]);
          }
