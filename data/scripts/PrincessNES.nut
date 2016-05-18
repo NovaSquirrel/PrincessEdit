@@ -3,6 +3,7 @@ LWriteCol Col1, Col2, Col3
 */
 
 local ColDataPointerTypes = ["SIGNPOST"]; // list of object types whose extra data is a pointer
+local FGControlTypes = ["COLUMN_DATA", "COLUMN_POINTER", "BLOCK_CONTENTS"];
 
 local RectRules = [
   {"T":"EMPTY",          "W":16,  "H":16, "O": "LObjN LO::R_AIR,            &X, &Y, &W, &H"},
@@ -46,10 +47,18 @@ local RectRules = [
   {"T":"BG_FENCE",       "W":16,  "H":1,  "O": "LObjN LO::WIDE_1,           &X, &Y, &W, LN1::FENCE"},
   {"T":"BG_TALL_GRASS",  "W":16,  "H":1,  "O": "LObjN LO::WIDE_1,           &X, &Y, &W, LN1::TALLGRASS"},
   {"T":"BG_FLOWER_1",    "W":16,  "H":1,  "O": "LObjN LO::WIDE_2,           &X, &Y, &W, LN2::FLOWER"},
-  {"T":"BG_BLACK",       "W":16,  "H":16, "O": "LObjN LO::RECT_2,           &X, &Y, &H, LN2::BLACK, &W"},
+  {"T":"BG_BLACK",       "W":256, "H":16, "O": "LObjN LO::RECT_2,           &X, &Y, &H, LN2::BLACK, &W"},
   {"T":"BG_TRUNK",       "W":1,   "H":16, "O": "LObjN LO::TALL_2,           &X, &Y, &H, LN2::TRUNK"},
   {"T":"BG_TRUNK_L",     "W":1,   "H":16, "O": "LObjN LO::TALL_2,           &X, &Y, &H, LN2::TRUNK_L"},
   {"T":"BG_BUSH_BOT",    "W":16,  "H":1,  "O": "LObjN LO::WIDE_2,           &X, &Y, &W, LN2::BUSH"},
+
+  {"T":"GRAY_BRICKS",    "W":16,  "H":1,  "O": "LObjN LO::WIDE_2,           &X, &Y, &W, LN2::GRAY_BRICKS"},
+  {"T":"GRAY_BRICKS",    "W":1,   "H":16, "O": "LObjN LO::TALL_2,           &X, &Y, &H, LN2::GRAY_BRICKS"},
+  {"T":"GRAY_BRICKS",    "W":16,  "H":16, "O": "LObjN LO::R_GRAYBRICKS,     &X, &Y, &W, &H"},
+  {"T":"GRAY_BRICKS",    "W":256, "H":16, "O": "LObjN LO::RECT_2,           &X, &Y, &H, LN2::GRAY_BRICKS, &W"},
+
+  {"T":"BIG_HEART",      "W":1,   "H":1,  "O": "LObj  LO::S_BIGHEART,       &X, &Y"},
+  {"T":"HEART",          "W":1,   "H":1,  "O": "LObj  LO::S_HEART,          &X, &Y"},
   {"T":"",               "W":1,   "H":1,  "O": "LObj  LO::S_CUSTOM,         &X, &Y, Metatiles::&T"},
   {"T":"",               "W":16,  "H":16, "O": "LObj  LO::R_CUSTOM,         &X, &Y, Metatiles::&T, (&W<<4)|&H"},
 ];
@@ -131,7 +140,7 @@ function PrincessExport() {
       }
   }
 
-  // find player start position
+  // Find player start position
   local StartX = 0;
   local StartY = 0;
   local FacingLeft = 0;
@@ -142,6 +151,9 @@ function PrincessExport() {
     if(PlayerPos[0][RTYPE] == "PLAYER_START_L")
       FacingLeft = 64;
   }
+
+  // Merge FG control types into FG
+  FG.extend(FindType(CT, FGControlTypes));
 
   // sort layers by X position
   // later: actually take Z ordering into consideration for the FG layer
@@ -242,7 +254,22 @@ function PrincessExport() {
     }
     LastX = R[RX];
 
-    api.ExportWrite(File, "  "+api.Interpolate(RectRules[Rule].O, "", ["X"+XDifference, "Y"+R[RY], "W"+(R[RW]-1), "H"+(R[RH]-1), "T"+R[RTYPE]]));
+    // Special handling for FG control types
+    if(FGControlTypes.find(R[RTYPE])!=null) {
+      api.ExportWrite(File, "  LSetX "+ R[RX]);
+      XDifference = 0;
+      switch(R[RTYPE]) {
+        case "BLOCK_CONTENTS":
+        case "COLUMN_DATA":
+          api.ExportWrite(File, "  LWriteCol "+R[REXTRA]);
+          break;
+        case "COLUMN_POINTER":
+          api.ExportWrite(File, "  LWriteCol <"+R[REXTRA]+", >"+R[REXTRA]);
+          break;
+      }
+    } else {
+      api.ExportWrite(File, "  "+api.Interpolate(RectRules[Rule].O, "", ["X"+XDifference, "Y"+R[RY], "W"+(R[RW]-1), "H"+(R[RH]-1), "T"+R[RTYPE]]));
+    }
 
     // Add extra data
     if(R[REXTRA] && R[REXTRA].len()) {
@@ -271,6 +298,7 @@ function PrincessExport() {
          } else if(R[REXTRA][0] == '*'){
            api.ExportWrite(File, "  LWriteCol $20, <"+R[REXTRA].slice(1)+", >"+R[REXTRA].slice(1));
          } else if(Commas.len() == 1 && Dashes.len() == 1) {
+           api.ExportWrite(File, "  LWriteCol $21, LevelId::"+R[REXTRA])
          } else {
            api.MessageBox("Bad door data: "+R[REXTRA]);
          }
@@ -285,7 +313,10 @@ function PrincessExport() {
   api.ExportWrite(File, "");
   api.ExportWrite(File, Filename+"Sprite:");
   foreach(sprite in SP) {
-    api.ExportWrite(File, format("  LSpr Enemy::%-20s %i, %3i, %3i", sprite[0]+",", (sprite[RFLIPS]&1), sprite[RX], sprite[RY]));
+    if(sprite[REXTRA] && sprite[REXTRA].len())
+      api.ExportWrite(File, format("  LSpr Enemy::%-20s %i, %3i, %3i, %s", sprite[0]+",", (sprite[RFLIPS]&1), sprite[RX], sprite[RY], sprite[REXTRA]));
+    else
+      api.ExportWrite(File, format("  LSpr Enemy::%-20s %i, %3i, %3i", sprite[0]+",", (sprite[RFLIPS]&1), sprite[RX], sprite[RY]));
   }
   api.ExportWrite(File, "  .byt 255 ; end");
 
