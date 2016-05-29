@@ -51,12 +51,10 @@ local RectRules = [
   {"T":"BG_TRUNK",       "W":1,   "H":16, "O": "LObjN LO::TALL_2,           &X, &Y, &H, LN2::TRUNK"},
   {"T":"BG_TRUNK_L",     "W":1,   "H":16, "O": "LObjN LO::TALL_2,           &X, &Y, &H, LN2::TRUNK_L"},
   {"T":"BG_BUSH_BOT",    "W":16,  "H":1,  "O": "LObjN LO::WIDE_2,           &X, &Y, &W, LN2::BUSH"},
-
   {"T":"GRAY_BRICKS",    "W":16,  "H":1,  "O": "LObjN LO::WIDE_2,           &X, &Y, &W, LN2::GRAY_BRICKS"},
   {"T":"GRAY_BRICKS",    "W":1,   "H":16, "O": "LObjN LO::TALL_2,           &X, &Y, &H, LN2::GRAY_BRICKS"},
   {"T":"GRAY_BRICKS",    "W":16,  "H":16, "O": "LObjN LO::R_GRAYBRICKS,     &X, &Y, &W, &H"},
   {"T":"GRAY_BRICKS",    "W":256, "H":16, "O": "LObjN LO::RECT_2,           &X, &Y, &H, LN2::GRAY_BRICKS, &W"},
-
   {"T":"BIG_HEART",      "W":1,   "H":1,  "O": "LObj  LO::S_BIGHEART,       &X, &Y"},
   {"T":"HEART",          "W":1,   "H":1,  "O": "LObj  LO::S_HEART,          &X, &Y"},
   {"T":"",               "W":1,   "H":1,  "O": "LObj  LO::S_CUSTOM,         &X, &Y, Metatiles::&T"},
@@ -229,6 +227,18 @@ function PrincessExport() {
   if(Config) {
     if("StartDialog" in Config)
       api.ExportWrite(File, "  .byt LSpecialCmd, LevelSpecialConfig::SET_START_DIALOG, <"+Config.StartDialog+", >"+Config.StartDialog);
+  }
+
+  // Write background changes
+  local BGChanges = FindType(CT, ["BACKGROUND"]);
+  for(local i=0; i < BGChanges.len(); i++) {
+      local NextX = HScreens;
+      local ThisX = BGChanges[i][RX]/16;
+      if(i != BGChanges.len()-1)
+        NextX = BGChanges[i+1][RX]/16;
+      if(BGChanges[i][REXTRA] && BGChanges[i][REXTRA].len())
+        api.ExportWrite(File, format("  .byt LSpecialCmd, LevelSpecialConfig::MAKE_BACKGROUNDS, $%.2x, LevelBackgroundId::%s",
+          (ThisX<<4)|(NextX-ThisX-1), BGChanges[i][REXTRA]));
   }
 
   // write all the lines for the level FG
