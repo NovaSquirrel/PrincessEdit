@@ -232,7 +232,7 @@ function PrincessExport() {
   // Write background changes
   local BGChanges = FindType(CT, ["BACKGROUND"]);
   for(local i=0; i < BGChanges.len(); i++) {
-      local NextX = HScreens;
+      local NextX = HScreens*VScreens;
       local ThisX = BGChanges[i][RX]/16;
       if(i != BGChanges.len()-1)
         NextX = BGChanges[i+1][RX]/16;
