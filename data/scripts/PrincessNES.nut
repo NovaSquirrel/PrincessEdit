@@ -28,7 +28,7 @@ local RectRules = [
   {"T":"COIN",           "W":16,  "H":16, "O": "LObjN LO::R_COIN,           &X, &Y, &W, &H"},
   {"T":"SPRING",         "W":1,   "H":1,  "O": "LObj  LO::S_SPRING,         &X, &Y"},
   {"T":"ROCK_GROUND",    "W":16,  "H":16, "O": "LObjN LO::R_ROCK,           &X, &Y, &W, &H"},
-  {"T":"ROCK_GROUND",    "W":256, "H":16, "O": "LObjN LO::RECT_1,           &X, &Y, &H, LN1::ROCK, &W"},
+  {"T":"ROCK_GROUND",    "W":256, "H":16, "O": "LObjN LO::RECT_3,           &X, &Y, &H, LN3::ROCK, &W"},
   {"T":"SMALL_ROCK",     "W":1,   "H":1,  "O": "LObj  LO::S_SOLID_ROCK,     &X, &Y"},
   {"T":"SOLID_LEDGE",    "W":16,  "H":1,  "O": "LObjN LO::WIDE_1,           &X, &Y, &W, LN1::SOLID_LEDGE"},
   {"T":"SOLID_LEDGE",    "W":256, "H":1,  "O": "LObjN LO::RECT_1,           &X, &Y, &W, LN1::SOLID_LEDGE, &W"},
@@ -62,9 +62,9 @@ local RectRules = [
   {"T":"SAND"            "W":16,  "H":16, "O": "LObjN LO::R_SAND,           &X, &Y, &W, &H"},
   {"T":"SAND"            "W":256, "H":16, "O": "LObjN LO::RECT_2,           &X, &Y, &H, LN2::SAND, &W"},
   {"T":"STRIPED_LOG_HORIZ", "W":16,"H":1, "O": "LObjN LO::WIDE_2,           &X, &Y, &W, LN2::STRIPED_LOG_HORIZ"},
-  {"T":"MOAI_RIGHT",     "W":1,   "H":1,  "O": "LObj  LO::S_MOAI_RIGHT, &X, &Y"},
-  {"T":"MOAI_LEFT",      "W":1,   "H":1,  "O": "LObj  LO::S_MOAI_LEFT, &X, &Y"},
-  {"T":"TROPICAL_FLOWER",  "W":1, "H":1,  "O": "LObj  LO::S_TROPICAL_FLOWER, &X, &Y"},
+  {"T":"MOAI_RIGHT",     "W":1,   "H":1,  "O": "LObj  LO::S_MOAI_RIGHT,     &X, &Y"},
+  {"T":"MOAI_LEFT",      "W":1,   "H":1,  "O": "LObj  LO::S_MOAI_LEFT,      &X, &Y"},
+  {"T":"TROPICAL_FLOWER",  "W":1, "H":1,  "O": "LObj  LO::S_TROPICAL_FLOWER,&X, &Y"},
   {"T":"TROPICAL_FLOWER_2","W":1, "H":1,  "O": "LObj  LO::S_TROPICAL_FLOWER_2, &X, &Y"},
   {"T":"LOG_HORIZ",      "W":16,  "H":1,  "O": "LObjN LO::WIDE_2,           &X, &Y, &W, LN2::LOG_HORIZ"},
   {"T":"BG_TREETOP_LL",  "W":1,   "H":1,  "O": "LObj  LO::S_BIG_BUSH, &X, &Y"},
@@ -73,6 +73,24 @@ local RectRules = [
   {"T":"WOOD_PLATFORM_TOP", "W":16,"H":1, "O": "LObjN LO::WIDE_2,           &X, &Y, &W, LN2::WOOD_PLATFORM_TOP"},
   {"T":"WOOD_PLATFORM",  "W":1,   "H":1,  "O": "LObj  LO::S_WOOD_PLATFORM,  &X, &Y"},
   {"T":"WOOD_PLATFORM",  "W":16,  "H":16, "O": "LObjN LO::R_WOOD_PLATFORM,  &X, &Y, &W, &H"},
+  {"T":"PATH_LINE",      "W":16,  "H":1,  "O": "LObjN LO::WIDE_2,           &X, &Y, &W, LN2::PATH_LINE"},
+  {"T":"PATH_LINE",      "W":1,   "H":16, "O": "LObjN LO::TALL_2,           &X, &Y, &H, LN2::PATH_LINE"},
+  {"T":"SQUIRREL_BUSH",   "W":1,   "H":1,  "O": "LObj  LO::S_SKWIRLBUSH,     &X, &Y"},
+  {"T":"K_STATUE_TOP",    "W":1,   "H":1,  "O": "LObj  LO::S_STATUE,         &X, &Y"},
+  {"T":"BRICKWALL_MIDDLE","W":16,  "H":16, "O": "LObjN LO::R_BRICKWALL,      &X, &Y, &W, &H"},
+  {"T":"WHITEFENCE_MIDDLE","W":16,  "H":1, "O": "LObjN LO::WIDE_3,           &X, &Y, &W, LN3::WHITEFENCE"},
+  {"T":"WOOD_ARROW_LEFT", "W":1,   "H":1,  "O": "LObj  LO::S_W_ARROW_LEFT,   &X, &Y"},
+  {"T":"WOOD_ARROW_DOWN", "W":1,   "H":1,  "O": "LObj  LO::S_W_ARROW_DOWN,   &X, &Y"},
+  {"T":"WOOD_ARROW_UP",   "W":1,   "H":1,  "O": "LObj  LO::S_W_ARROW_UP,     &X, &Y"},
+  {"T":"WOOD_ARROW_RIGHT","W":1,   "H":1,  "O": "LObj  LO::S_W_ARROW_RIGHT,  &X, &Y"},
+  {"T":"WOOD_BOMB",       "W":1,   "H":1,  "O": "LObj  LO::S_W_BOMB,         &X, &Y"},
+  {"T":"WOOD_CRATE",      "W":1,   "H":1,  "O": "LObj  LO::S_W_CRATE,        &X, &Y"},
+  {"T":"METAL_ARROW_LEFT", "W":1,  "H":1,  "O": "LObj  LO::S_M_ARROW_LEFT,   &X, &Y"},
+  {"T":"METAL_ARROW_DOWN", "W":1,  "H":1,  "O": "LObj  LO::S_M_ARROW_DOWN,   &X, &Y"},
+  {"T":"METAL_ARROW_UP",   "W":1,  "H":1,  "O": "LObj  LO::S_M_ARROW_UP,     &X, &Y"},
+  {"T":"METAL_ARROW_RIGHT","W":1,  "H":1,  "O": "LObj  LO::S_M_ARROW_RIGHT,  &X, &Y"},
+  {"T":"METAL_BOMB",       "W":1,  "H":1,  "O": "LObj  LO::S_M_BOMB,         &X, &Y"},
+  {"T":"METAL_CRATE",      "W":1,  "H":1,  "O": "LObj  LO::S_M_CRATE,        &X, &Y"},
   {"T":"",               "W":1,   "H":1,  "O": "LObj  LO::S_CUSTOM,         &X, &Y, Metatiles::&T"},
   {"T":"",               "W":16,  "H":16, "O": "LObj  LO::R_CUSTOM,         &X, &Y, Metatiles::&T, (&W<<4)|&H"},
 ];
@@ -261,6 +279,8 @@ function PrincessExport() {
   local LastX = 0;
   foreach(R in FG) {
     local Rule = FindRuleFor(R[RTYPE], R[RW], R[RH]);
+    if(Rule == -1)
+      api.MessageBox(format("No rule found for %s of size %i, %i", R[RTYPE], R[RW], R[RH]));
 
     local XDifference = R[RX] - LastX;
     if(XDifference >= 16 || XDifference < 0) {
