@@ -3,6 +3,7 @@ LWriteCol Col1, Col2, Col3
 */
 
 local ColDataPointerTypes = ["SIGNPOST"]; // list of object types whose extra data is a pointer
+local PrizeContainingTypes = ["PRIZE", "BRICKPRIZE"]; // list of object types whose extra data is an inventory type
 local FGControlTypes = ["COLUMN_DATA", "COLUMN_POINTER", "BLOCK_CONTENTS"];
 
 local RectRules = [
@@ -335,6 +336,8 @@ function PrincessExport() {
     if(R[REXTRA] && R[REXTRA].len()) {
       local Dashes = split(R[REXTRA], "-");
       local Commas = split(R[REXTRA], ",");
+      if(PrizeContainingTypes.find(R[RTYPE]) != null)
+        api.ExportWrite(File, "  LWriteCol InventoryItem::"+R[REXTRA]);
       if(ColDataPointerTypes.find(R[RTYPE]) != null)
         api.ExportWrite(File, "  LWriteCol <"+R[REXTRA]+", >"+R[REXTRA]);
       switch(R[RTYPE]) {
