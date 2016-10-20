@@ -106,6 +106,8 @@ local RectRules = [
   {"T":"BG_GLASS_BLUE",  "W":16,  "H":16, "O": "LObjN LO::R_BG_GLASS_BLUE,  &X, &Y, &W, &H"},
   {"T":"FG_GLASS_RED",   "W":16,  "H":16, "O": "LObjN LO::R_FG_GLASS_RED,   &X, &Y, &W, &H"},
   {"T":"FG_GLASS_BLUE",  "W":16,  "H":16, "O": "LObjN LO::R_FG_GLASS_BLUE,  &X, &Y, &W, &H"},
+  {"T":"CEILING_BARRIER","W":1,   "H":1,  "O": "LObj  LO::S_CEILING_BARRIER,&X, &Y"},
+  {"T":"CEILING_BARRIER","W":16,  "H":16, "O": "LObjN LO::R_CEILING_BARRIER,&X, &Y, &W, &H"},
   {"T":"",               "W":1,   "H":1,  "O": "LObj  LO::S_CUSTOM,         &X, &Y, Metatiles::&T"},
   {"T":"",               "W":16,  "H":16, "O": "LObj  LO::R_CUSTOM,         &X, &Y, Metatiles::&T, (&W<<4)|&H"},
 ];
