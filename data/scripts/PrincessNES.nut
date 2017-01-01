@@ -4,7 +4,7 @@ LWriteCol Col1, Col2, Col3
 
 local ColDataPointerTypes = ["SIGNPOST"]; // list of object types whose extra data is a pointer
 local PrizeContainingTypes = ["PRIZE", "BRICKPRIZE"]; // list of object types whose extra data is an inventory type
-local FGControlTypes = ["COLUMN_DATA", "COLUMN_POINTER", "BLOCK_CONTENTS"];
+local FGControlTypes = ["COLUMN_DATA", "COLUMN_POINTER", "BLOCK_CONTENTS", "TELEPORT"];
 
 local RectRules = [
   {"T":"EMPTY",          "W":16,  "H":16, "O": "LObjN LO::R_AIR,            &X, &Y, &W, &H"},
@@ -343,10 +343,11 @@ function PrincessExport() {
       if(ColDataPointerTypes.find(R[RTYPE]) != null)
         api.ExportWrite(File, "  LWriteCol <"+R[REXTRA]+", >"+R[REXTRA]);
       switch(R[RTYPE]) {
+        case "TELEPORT":
         case "DOOR":
-          if(Dashes.len() == 2) {
+          if(Dashes.len() == 2) { // A-B, two paired doors
             local Found = false;
-            foreach(R2 in FG)
+            foreach(R2 in FG) {
               if(R2[RTYPE]=="DOOR") {
                 local Dashes2 = split(R2[REXTRA], "-");
                 if(Dashes2.len() == 2 && Dashes2[0]==Dashes[1]) {
@@ -354,13 +355,23 @@ function PrincessExport() {
                   Found = true;
                 }
               }
+            }
+            if(!Found)
+              foreach(R2 in CT) {
+                if(R2[RTYPE]=="TELEPORT_DESTINATION") {
+                  if(R2[REXTRA] == Dashes[1]) {
+                    api.ExportWrite(File, "  LWriteCol "+R2[RY]+", "+R2[RX]);
+                    Found = true;
+                  }
+                }
+              }
             if(!Found)
               api.MessageBox("Destination door "+Dashes[1]+" not found");
-         } else if(Commas.len() == 2) {
+         } else if(Commas.len() == 2) { // X,Y
            api.ExportWrite(File, "  LWriteCol "+Commas[0]+", "+Commas[1]);
-         } else if(Commas.len() == 3) {
+         } else if(Commas.len() == 3) { // X,Y,level
            api.ExportWrite(File, "  LWriteCol $10|"+Commas[0]+", "+Commas[1]+", LevelId::"+Commas[2]);
-         } else if(R[REXTRA][0] == '*'){
+         } else if(R[REXTRA][0] == '*'){ // script
            api.ExportWrite(File, "  LWriteCol $20, <"+R[REXTRA].slice(1)+", >"+R[REXTRA].slice(1));
          } else if(Commas.len() == 1 && Dashes.len() == 1) {
            api.ExportWrite(File, "  LWriteCol $21, LevelId::"+R[REXTRA])
