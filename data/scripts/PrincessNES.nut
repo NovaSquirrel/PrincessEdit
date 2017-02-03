@@ -345,13 +345,15 @@ function PrincessExport() {
       switch(R[RTYPE]) {
         case "TELEPORT":
         case "DOOR":
+        case "TELEPORTER":
           if(Dashes.len() == 2) { // A-B, two paired doors
             local Found = false;
             foreach(R2 in FG) {
-              if(R2[RTYPE]=="DOOR") {
+              local IsTeleporter = R2[RTYPE] == "TELEPORTER";
+              if(R2[RTYPE]=="DOOR" || R2[RTYPE]=="TELEPORTER") {
                 local Dashes2 = split(R2[REXTRA], "-");
                 if(Dashes2.len() == 2 && Dashes2[0]==Dashes[1]) {
-                  api.ExportWrite(File, "  LWriteCol "+R2[RY]+", "+R2[RX]);
+                  api.ExportWrite(File, "  LWriteCol "+(R2[RY]-(IsTeleporter?1:0))+", "+R2[RX]);
                   Found = true;
                 }
               }
