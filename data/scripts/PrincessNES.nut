@@ -2,7 +2,7 @@
 LWriteCol Col1, Col2, Col3
 */
 
-local ColDataPointerTypes = ["SIGNPOST"]; // list of object types whose extra data is a pointer
+local ColDataPointerTypes = ["SIGNPOST", "STORY_DIALOG_TRIGGER"]; // list of object types whose extra data is a pointer
 local PrizeContainingTypes = ["PRIZE", "BRICKPRIZE"]; // list of object types whose extra data is an inventory type
 local FGControlTypes = ["COLUMN_DATA", "COLUMN_POINTER", "BLOCK_CONTENTS", "TELEPORT"];
 
@@ -108,6 +108,8 @@ local RectRules = [
   {"T":"FG_GLASS_BLUE",  "W":16,  "H":16, "O": "LObjN LO::R_FG_GLASS_BLUE,  &X, &Y, &W, &H"},
   {"T":"CEILING_BARRIER","W":1,   "H":1,  "O": "LObj  LO::S_CEILING_BARRIER,&X, &Y"},
   {"T":"CEILING_BARRIER","W":16,  "H":16, "O": "LObjN LO::R_CEILING_BARRIER,&X, &Y, &W, &H"},
+  {"T":"STORY_DIALOG_TRIGGER", "W": 1, "H":1, "O": "LObj  LO::S_STORY_TRIGGER,         &X, &Y"},
+  {"T":"GLIDER_BLOCK",   "W":1,   "H":1,  "O": "LObj  LO::S_GLIDER_BLOCK,   &X, &Y"},
   {"T":"",               "W":1,   "H":1,  "O": "LObj  LO::S_CUSTOM,         &X, &Y, Metatiles::&T"},
   {"T":"",               "W":16,  "H":16, "O": "LObj  LO::R_CUSTOM,         &X, &Y, Metatiles::&T, (&W<<4)|&H"},
 ];
@@ -278,6 +280,8 @@ function PrincessExport() {
   if(Config) {
     if("StartDialog" in Config)
       api.ExportWrite(File, "  .byt LSpecialCmd, LevelSpecialConfig::SET_START_DIALOG, <"+Config.StartDialog+", >"+Config.StartDialog);
+    if("PuzzleMode" in Config)
+      api.ExportWrite(File, "  .byt LSpecialCmd, LevelSpecialConfig::PUZZLE_MODE, "+Config.PuzzleMode+", $00");
   }
 
   // Write background changes
