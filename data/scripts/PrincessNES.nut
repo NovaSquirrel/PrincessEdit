@@ -110,6 +110,21 @@ local RectRules = [
   {"T":"CEILING_BARRIER","W":16,  "H":16, "O": "LObjN LO::R_CEILING_BARRIER,&X, &Y, &W, &H"},
   {"T":"STORY_DIALOG_TRIGGER", "W": 1, "H":1, "O": "LObj  LO::S_STORY_TRIGGER,         &X, &Y"},
   {"T":"GLIDER_BLOCK",   "W":1,   "H":1,  "O": "LObj  LO::S_GLIDER_BLOCK,   &X, &Y"},
+  {"T":"MINE_TRACK",                    "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK,         &X, &Y"},
+  {"T":"MINE_TRACK",                    "W":16,  "H":1,  "O": "LObjN LO::WIDE_3,           &X, &Y, &W, LN3::MINE_TRACKS"},
+  {"T":"MINE_TRACK_BRAKES",             "W":16,  "H":1,  "O": "LObjN LO::WIDE_3,           &X, &Y, &W, LN3::MINE_TRACKS_BRAKES"},
+  {"T":"MINE_TRACK_UP",                 "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_UP,       &X, &Y"}
+  {"T":"MINE_TRACK_UP_LEFT",            "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_UPLEFT,   &X, &Y"}
+  {"T":"MINE_TRACK_UP_RIGHT",           "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_UPRIGHT,  &X, &Y"}
+  {"T":"MINE_TRACK_BUMP",               "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_BUMP,     &X, &Y"}
+  {"T":"MINE_TRACK_SPECIAL",            "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_SPECIAL,  &X, &Y"}
+  {"T":"MINE_TRACK_STOP",               "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_STOP,     &X, &Y"}
+  {"T":"MINE_TRACK_SUPPORTS",           "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_SUPPORTS, &X, &Y"}
+  {"T":"MINE_TRACK_STEEP_LEFT_BOT",     "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_SSL,      &X, &Y"}
+  {"T":"MINE_TRACK_STEEP_RIGHT_BOT",    "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_SSR,      &X, &Y"}
+  {"T":"MINE_TRACK_GRADUAL_LEFT_L",     "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_SGL,      &X, &Y"}
+  {"T":"MINE_TRACK_GRADUAL_RIGHT_R",    "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_SGR,      &X, &Y"}
+  {"T":"MINE_TRACK_SUPPORTS_ONLY",      "W":16,  "H":16, "O": "LObjN LO::R_MTRACK_SUPPORTSONLY,  &X, &Y, &W, &H"},
   {"T":"",               "W":1,   "H":1,  "O": "LObj  LO::S_CUSTOM,         &X, &Y, Metatiles::&T"},
   {"T":"",               "W":16,  "H":16, "O": "LObj  LO::R_CUSTOM,         &X, &Y, Metatiles::&T, (&W<<4)|&H"},
 ];
