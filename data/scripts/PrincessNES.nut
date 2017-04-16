@@ -125,6 +125,7 @@ local RectRules = [
   {"T":"MINE_TRACK_GRADUAL_LEFT_L",     "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_SGL,      &X, &Y"}
   {"T":"MINE_TRACK_GRADUAL_RIGHT_R",    "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_SGR,      &X, &Y"}
   {"T":"MINE_TRACK_SUPPORTS_ONLY",      "W":16,  "H":16, "O": "LObjN LO::R_MTRACK_SUPPORTSONLY,  &X, &Y, &W, &H"},
+  {"T":"ENEMY_BARRIER",                 "W":16,  "H":16, "O": "LObjN LO::R_ENEMY_BARRIER      ,  &X, &Y, &W, &H"}
   {"T":"",               "W":1,   "H":1,  "O": "LObj  LO::S_CUSTOM,         &X, &Y, Metatiles::&T"},
   {"T":"",               "W":16,  "H":16, "O": "LObj  LO::R_CUSTOM,         &X, &Y, Metatiles::&T, (&W<<4)|&H"},
 ];
@@ -357,6 +358,8 @@ function PrincessExport() {
     if(R[REXTRA] && R[REXTRA].len()) {
       local Dashes = split(R[REXTRA], "-");
       local Commas = split(R[REXTRA], ",");
+      if(R[RTYPE] == "MINE_TRACK_BRAKES")
+        api.ExportWrite(File, "  LWriteCol "+R[REXTRA]);
       if(PrizeContainingTypes.find(R[RTYPE]) != null)
         api.ExportWrite(File, "  LWriteCol InventoryItem::"+R[REXTRA]);
       if(ColDataPointerTypes.find(R[RTYPE]) != null)
