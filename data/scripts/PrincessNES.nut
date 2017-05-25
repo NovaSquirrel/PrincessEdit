@@ -180,18 +180,18 @@ function PrincessExport() {
     Boundaries = Boundaries | Bit;
   }
 
+  local HScreens = Width/16;
+  local VScreens = Height/15;
+  local UseLinks = VScreens > 1;
+
   foreach(R in CT)
     if(R[RTYPE]=="SCROLL_LOCK") {
-      local Screen = R[RX]/16;
+      local Screen = (R[RX]/16) + (R[RY]/15)*HScreens;
       if((R[RX]&15) == 15)
         SetBoundaryAt(Screen+1);
       else
         SetBoundaryAt(Screen);
     }
-
-  local HScreens = Width/16;
-  local VScreens = Height/15;
-  local UseLinks = VScreens > 1;
 
   print("Height "+Height)
   print("VScreens "+VScreens)
