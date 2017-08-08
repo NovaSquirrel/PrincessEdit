@@ -126,6 +126,10 @@ local RectRules = [
   {"T":"MINE_TRACK_GRADUAL_RIGHT_R",    "W":1,   "H":1,  "O": "LObj  LO::S_MTRACK_SGR,      &X, &Y"}
   {"T":"MINE_TRACK_SUPPORTS_ONLY",      "W":16,  "H":16, "O": "LObjN LO::R_MTRACK_SUPPORTSONLY,  &X, &Y, &W, &H"},
   {"T":"ENEMY_BARRIER",                 "W":16,  "H":16, "O": "LObjN LO::R_ENEMY_BARRIER      ,  &X, &Y, &W, &H"}
+  {"T":"SNOWMAN_TOP",                   "W":1,   "H":1,  "O": "LObj  LO::S_SNOWMAN,         &X, &Y"}
+  {"T":"FROZEN_CRACK",                  "W":1,   "H":1,  "O": "LObj  LO::S_FROZENCRACK,     &X, &Y"}
+  {"T":"FROZEN_CRACK",                  "W":1,   "H":16, "O": "LObjN LO::TALL_3,            &X, &Y, &H, LN2::FROZEN_CRACK"},
+  {"T":"FROZEN_CRACK",                  "W":16,  "H":1,  "O": "LObjN LO::WIDE_3,            &X, &Y, &W, LN3::FROZEN_CRACK"},
   {"T":"",               "W":1,   "H":1,  "O": "LObj  LO::S_CUSTOM,         &X, &Y, Metatiles::&T"},
   {"T":"",               "W":16,  "H":16, "O": "LObj  LO::R_CUSTOM,         &X, &Y, Metatiles::&T, (&W<<4)|&H"},
 ];
