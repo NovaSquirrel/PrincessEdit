@@ -130,6 +130,7 @@ local RectRules = [
   {"T":"FROZEN_CRACK",                  "W":1,   "H":1,  "O": "LObj  LO::S_FROZENCRACK,     &X, &Y"}
   {"T":"FROZEN_CRACK",                  "W":1,   "H":16, "O": "LObjN LO::TALL_3,            &X, &Y, &H, LN2::FROZEN_CRACK"},
   {"T":"FROZEN_CRACK",                  "W":16,  "H":1,  "O": "LObjN LO::WIDE_3,            &X, &Y, &W, LN3::FROZEN_CRACK"},
+  {"T":"ICE2",                          "W":16,  "H":16, "O": "LObjN LO::R_ICE2,            &X, &Y, &W, &H"}
   {"T":"",               "W":1,   "H":1,  "O": "LObj  LO::S_CUSTOM,         &X, &Y, Metatiles::&T"},
   {"T":"",               "W":16,  "H":16, "O": "LObj  LO::R_CUSTOM,         &X, &Y, Metatiles::&T, (&W<<4)|&H"},
 ];
@@ -304,18 +305,6 @@ function PrincessExport() {
       api.ExportWrite(File, "  .byt LSpecialCmd, LevelSpecialConfig::PUZZLE_MODE, "+Config.PuzzleMode+", $00");
   }
 
-  // Write background changes
-  local BGChanges = FindType(CT, ["BACKGROUND"]);
-  for(local i=0; i < BGChanges.len(); i++) {
-      local NextX = HScreens*VScreens;
-      local ThisX = BGChanges[i][RX]/16;
-      if(i != BGChanges.len()-1)
-        NextX = BGChanges[i+1][RX]/16;
-      if(BGChanges[i][REXTRA] && BGChanges[i][REXTRA].len())
-        api.ExportWrite(File, format("  .byt LSpecialCmd, LevelSpecialConfig::MAKE_BACKGROUNDS, $%.2x, LevelBackgroundId::%s",
-          (ThisX<<4)|(NextX-ThisX-1), BGChanges[i][REXTRA]));
-  }
-
   // write all the lines for the level FG
   local LastX = 0;
   foreach(R in FG) {
@@ -411,6 +400,19 @@ function PrincessExport() {
 
     }
   }
+
+  // Write background changes
+  local BGChanges = FindType(CT, ["BACKGROUND"]);
+  for(local i=0; i < BGChanges.len(); i++) {
+      local NextX = HScreens*VScreens;
+      local ThisX = BGChanges[i][RX]/16;
+      if(i != BGChanges.len()-1)
+        NextX = BGChanges[i+1][RX]/16;
+      if(BGChanges[i][REXTRA] && BGChanges[i][REXTRA].len())
+        api.ExportWrite(File, format("  .byt LSpecialCmd, LevelSpecialConfig::MAKE_BACKGROUNDS, $%.2x, LevelBackgroundId::%s",
+          (ThisX<<4)|(NextX-ThisX-1), BGChanges[i][REXTRA]));
+  }
+
   api.ExportWrite(File, "  LFinished");
 
   // do the sprite section
