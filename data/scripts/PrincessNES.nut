@@ -1,7 +1,3 @@
-/*
-LWriteCol Col1, Col2, Col3
-*/
-
 local ColDataPointerTypes = ["SIGNPOST", "STORY_DIALOG_TRIGGER"]; // list of object types whose extra data is a pointer
 local PrizeContainingTypes = ["PRIZE", "BRICKPRIZE"]; // list of object types whose extra data is an inventory type
 local FGControlTypes = ["COLUMN_DATA", "COLUMN_POINTER", "BLOCK_CONTENTS", "TELEPORT"];
@@ -147,6 +143,7 @@ function FindRuleFor(Type, W, H) {
   return -1;
 }
 
+// Return an array containing all rectangles in a layer of a given type
 function FindType(Array, Types) {
   function Filter(Index, Value) {
     return Types.find(Value[0])!=null;
@@ -189,6 +186,34 @@ function PrincessExport() {
   local VScreens = Height/15;
   local UseLinks = VScreens > 1;
 
+  local ManualScreenLinks = FindType(CT, ["SCREEN_LINK"]);
+  local ManualScreenList = array(16, 0);
+  local UseManualScreenLinks = ManualScreenLinks.len() > 0;
+
+  foreach(R in ManualScreenLinks) {
+    local Args         = split(R[REXTRA], ",");
+    local Top          = Args[1];
+    local Bottom       = Args[2];
+
+    local ThisScreen   = R[RX]/16;
+    local TopScreen    = 0;
+    local BottomScreen = 0;
+
+    // Search for links
+    foreach(R2 in ManualScreenLinks) {
+      local Name = split(R2[REXTRA], ",")[0];
+      if(Name == Top) {
+        TopScreen = ((R2[RX]/16)-ThisScreen)&15;
+      }
+      if(Name == Bottom) {
+        BottomScreen = ((R2[RX]/16)-ThisScreen)&15;
+      }
+    }
+
+    ManualScreenList[ThisScreen] = (TopScreen<<4)|BottomScreen;
+  }
+
+  // Find all scroll locks
   foreach(R in CT)
     if(R[RTYPE]=="SCROLL_LOCK") {
       local Screen = (R[RX]/16) + (R[RY]/15)*HScreens;
@@ -202,6 +227,7 @@ function PrincessExport() {
   print("VScreens "+VScreens)
 
   // Rearrange level into a big horizontal strip
+  // To do: allow the user to skip certain screens
   if(VScreens > 1) {
     foreach(List in [FG, SP, CT])
       for(local i=0; i<List.len(); i++) {
@@ -276,12 +302,18 @@ function PrincessExport() {
   api.ExportWrite(File, "  .byt 255 ; end");
 
   // write boundaries
-  if(UseLinks)
-    Boundaries = Boundaries | 1;
+  if(UseLinks || UseManualScreenLinks)
+    Boundaries = Boundaries | 1; // signal that there are links too
   api.ExportWrite(File, format("  .byt $%.2x, $%.2x ; boundaries", Boundaries>>8, Boundaries&255));
 
   // write links if used
-  if(UseLinks) {
+  if(UseManualScreenLinks) {
+    // to do, allow runs of the same link
+    for(local i=0; i<16; i++) {
+      api.ExportWrite(File, format("  .byt $%.2x, $%.2x ; link", 0, ManualScreenList[i]));
+    }
+  }
+  else if(UseLinks) {
     for(local i=0; i<VScreens; i++) {
       local Up = ((-HScreens)&15)<<4;
       local Down = HScreens;
@@ -289,7 +321,7 @@ function PrincessExport() {
       if(i==VScreens-1) Down = 0;
       api.ExportWrite(File, format("  .byt $%.2x, $%.2x ; link", (HScreens-1)&15, Up|Down));
     }
-    if(HScreens*VScreens != 16)
+    if(HScreens*VScreens != 16) // Fill out any unused screens
       api.ExportWrite(File, format("  .byt $%.2x, $00", (16-(HScreens*VScreens)-1)&15));  
   }
 
@@ -305,13 +337,14 @@ function PrincessExport() {
       api.ExportWrite(File, "  .byt LSpecialCmd, LevelSpecialConfig::PUZZLE_MODE, "+Config.PuzzleMode+", $00");
   }
 
-  // write all the lines for the level FG
+  // write all level FG commands
   local LastX = 0;
   foreach(R in FG) {
     local Rule = FindRuleFor(R[RTYPE], R[RW], R[RH]);
     if(Rule == -1)
       api.MessageBox(format("No rule found for %s of size %i, %i", R[RTYPE], R[RW], R[RH]));
 
+    // Adjust the X position
     local XDifference = R[RX] - LastX;
     if(XDifference >= 16 || XDifference < 0) {
       if(XDifference == 16) {
@@ -330,7 +363,7 @@ function PrincessExport() {
     }
     LastX = R[RX];
 
-    // Special handling for FG control types
+    // Control layer types that got merged into the FG layer get written too
     if(FGControlTypes.find(R[RTYPE])!=null) {
       api.ExportWrite(File, "  LSetX "+ R[RX]);
       XDifference = 0;
@@ -353,6 +386,17 @@ function PrincessExport() {
       local Commas = split(R[REXTRA], ",");
       if(R[RTYPE] == "MINE_TRACK_BRAKES")
         api.ExportWrite(File, "  LWriteCol "+R[REXTRA]);
+      if(R[RTYPE] == "CLONER")
+        api.ExportWrite(File, "  LWriteCol Enemy::"+R[REXTRA]);
+      if(R[RTYPE] == "CLONE_SWITCH") {
+        foreach(R2 in CT) {
+          if(R2[RTYPE]=="TELEPORT_DESTINATION") {
+             if(R2[REXTRA] == R[REXTRA]) {
+               api.ExportWrite(File, "  LWriteCol "+R2[RX]);
+             }
+           }
+        }
+      }
       if(PrizeContainingTypes.find(R[RTYPE]) != null)
         api.ExportWrite(File, "  LWriteCol InventoryItem::"+R[REXTRA]);
       if(ColDataPointerTypes.find(R[RTYPE]) != null)
@@ -415,7 +459,7 @@ function PrincessExport() {
 
   api.ExportWrite(File, "  LFinished");
 
-  // do the sprite section
+  // Write the list of sprites
   api.ExportWrite(File, "");
   api.ExportWrite(File, Filename+"Sprite:");
   foreach(sprite in SP) {
