@@ -75,6 +75,7 @@ local RectRules = [
   {"T":"PATH_LINE",      "W":16,  "H":1,  "O": "LObjN LO::WIDE_2,           &X, &Y, &W, LN2::PATH_LINE"},
   {"T":"PATH_LINE",      "W":1,   "H":16, "O": "LObjN LO::TALL_2,           &X, &Y, &H, LN2::PATH_LINE"},
   {"T":"SQUIRREL_BUSH",   "W":1,   "H":1, "O": "LObj  LO::S_SKWIRLBUSH,     &X, &Y"},
+  {"T":"SQUIRREL_BUSH",   "W":16,  "H":16,"O": "LObjN LO::R_SKWIRLBUSH,     &X, &Y, &W, &H"},
   {"T":"K_STATUE_TOP",    "W":1,   "H":1, "O": "LObj  LO::S_STATUE,         &X, &Y"},
   {"T":"BRICKWALL_MIDDLE","W":16,  "H":16,"O": "LObjN LO::R_BRICKWALL,      &X, &Y, &W, &H"},
   {"T":"WHITEFENCE_MIDDLE","W":16,  "H":1,"O": "LObjN LO::WIDE_3,           &X, &Y, &W, LN3::WHITEFENCE"},
@@ -124,7 +125,7 @@ local RectRules = [
   {"T":"ENEMY_BARRIER",                 "W":16,  "H":16, "O": "LObjN LO::R_ENEMY_BARRIER      ,  &X, &Y, &W, &H"}
   {"T":"SNOWMAN_TOP",                   "W":1,   "H":1,  "O": "LObj  LO::S_SNOWMAN,         &X, &Y"}
   {"T":"FROZEN_CRACK",                  "W":1,   "H":1,  "O": "LObj  LO::S_FROZENCRACK,     &X, &Y"}
-  {"T":"FROZEN_CRACK",                  "W":1,   "H":16, "O": "LObjN LO::TALL_3,            &X, &Y, &H, LN2::FROZEN_CRACK"},
+  {"T":"FROZEN_CRACK",                  "W":1,   "H":16, "O": "LObjN LO::TALL_3,            &X, &Y, &H, LN3::FROZEN_CRACK"},
   {"T":"FROZEN_CRACK",                  "W":16,  "H":1,  "O": "LObjN LO::WIDE_3,            &X, &Y, &W, LN3::FROZEN_CRACK"},
   {"T":"ICE2",                          "W":16,  "H":16, "O": "LObjN LO::R_ICE2,            &X, &Y, &W, &H"}
   {"T":"",               "W":1,   "H":1,  "O": "LObj  LO::S_CUSTOM,         &X, &Y, Metatiles::&T"},
@@ -455,6 +456,11 @@ function PrincessExport() {
       if(BGChanges[i][REXTRA] && BGChanges[i][REXTRA].len())
         api.ExportWrite(File, format("  .byt LSpecialCmd, LevelSpecialConfig::MAKE_BACKGROUNDS, $%.2x, LevelBackgroundId::%s",
           (ThisX<<4)|(NextX-ThisX-1), BGChanges[i][REXTRA]));
+  }
+
+  local LevelEffects = FindType(CT, ["LEVEL_EFFECT"]);
+  foreach(R in LevelEffects) {
+    api.ExportWrite(File, format("  .byt LSpecialCmd, LevelSpecialConfig::%s", R[REXTRA]));
   }
 
   api.ExportWrite(File, "  LFinished");
