@@ -248,7 +248,9 @@ extern SDL_Cursor *SystemCursors[SYSCURSOR_MAX];
 #define MSG_INFO_ADDED  29       /* info was added */
 
 FILE *fopen_with_basepath(const char *Path, const char *Modes);
+#ifndef strlcpy
 void strlcpy(char *Destination, const char *Source, int MaxLength);
+#endif
 int memcasecmp(const char *Text1, const char *Text2, int Length);
 void rectfill(SDL_Renderer *Bmp, int X1, int Y1, int X2, int Y2);
 void rect(SDL_Renderer *Bmp, int X1, int Y1, int X2, int Y2);

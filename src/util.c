@@ -188,6 +188,7 @@ void TextInterpolate(char *Out, const char *In, char Prefix, const char *Replace
   *Out = 0;
 }
 
+#ifndef strlcpy
 void strlcpy(char *Destination, const char *Source, int MaxLength) {
   // MaxLength is directly from sizeof() so it includes the zero
   int SourceLen = strlen(Source);
@@ -196,6 +197,7 @@ void strlcpy(char *Destination, const char *Source, int MaxLength) {
   memcpy(Destination, Source, MaxLength-1);
   Destination[MaxLength-1] = 0;
 }
+#endif
 
 int memcasecmp(const char *Text1, const char *Text2, int Length) {
   for(;Length;Length--)
