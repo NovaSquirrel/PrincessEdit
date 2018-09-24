@@ -8,17 +8,19 @@ local RectRules = [
   {"T":"FENCE",          "W":1,   "H":1,  "O": "db LVL_FENCE,   &P"},
   {"T":"GRASS",          "W":1,   "H":1,  "O": "db LVL_GRASS,   &P"},
   {"T":"FLOWER",         "W":1,   "H":1,  "O": "db LVL_FLOWER,  &P"},
-  {"T":"LOCK",           "W":1,   "H":1,  "O": "db LVL_LOCK,    &P"},
+  {"T":"WATER",          "W":1,   "H":1,  "O": "db LVL_WATER,   &P"},
   {"T":"SPRING",         "W":1,   "H":1,  "O": "db LVL_SPRING,  &P"},
+  {"T":"POLE",           "W":1,   "H":1,  "O": "db LVL_POLE,    &P"},
 
   {"T":"CHECKER",        "W":16,  "H":1,  "O": "db LVL_H_CHECKER|&W, &P"},
   {"T":"CHECKER",        "W":1,   "H":16, "O": "db LVL_V_CHECKER|&H, &P"},
 
-  {"T":"PLAT",          "W":16,  "H":1,  "O": "db LVL_H_PLAT|&W, &P"},
+  {"T":"PLAT",           "W":16,  "H":1,  "O": "db LVL_H_PLAT|&W, &P"},
   {"T":"FPLAT",          "W":16,  "H":1,  "O": "db LVL_H_FPLAT|&W, &P"},
   {"T":"FENCE",          "W":16,  "H":1,  "O": "db LVL_H_FENCE|&W, &P"},
   {"T":"GRASS",          "W":16,  "H":1,  "O": "db LVL_H_GRASS|&W, &P"},
-  {"T":"FLOWER",          "W":16,  "H":1,  "O": "db LVL_H_FLOWER|&W, &P"},
+  {"T":"FLOWER",         "W":16,  "H":1,  "O": "db LVL_H_FLOWER|&W, &P"},
+  {"T":"DIRT",           "W":16,  "H":1,  "O": "db LVL_H_DIRT|&W, &P"},
 
   {"T":"SOLID",          "W":16,  "H":1,  "O": "db LVL_H_SOLID|&W, &P"},
   {"T":"SOLID",          "W":1,   "H":16, "O": "db LVL_V_SOLID|&H, &P"},
@@ -34,8 +36,9 @@ local RectRules = [
   {"T":"FENCE",          "W":16,  "H":16, "O": "db LVL_RECT|LVL_FENCE,   &P, &R"},
   {"T":"GRASS",          "W":16,  "H":16, "O": "db LVL_RECT|LVL_GRASS,   &P, &R"},
   {"T":"FLOWER",         "W":16,  "H":16, "O": "db LVL_RECT|LVL_FLOWER,  &P, &R"},
-  {"T":"LOCK",           "W":16,  "H":16, "O": "db LVL_RECT|LVL_LOCK,    &P, &R"},
+  {"T":"WATER",          "W":16,  "H":16, "O": "db LVL_RECT|LVL_WATER,   &P, &R"},
   {"T":"SPRING",         "W":16,  "H":16, "O": "db LVL_RECT|LVL_SPRING,  &P, &R"}
+  {"T":"POLE",           "W":16,  "H":16, "O": "db LVL_RECT|LVL_POLE,    &P, &R"}
 ];
 
 function Hex(int) {
@@ -72,6 +75,8 @@ function PrincessExport() {
   local Width = api.GetInfo("width");
   local Height = api.GetInfo("height");
 
+  local StartPos = 0;
+
   // open the output file
   local Filename = split(api.GetInfo("filename"), ".")[0];
   local ExportName = Filename+".s";
@@ -84,6 +89,10 @@ function PrincessExport() {
 
   // write all level FG commands
   foreach(R in FG) {
+    if(R[RTYPE] == "PLAYER") {
+      StartPos = R[RX]|(R[RY]<<4);
+      continue;
+    }
     local Rule = FindRuleFor(R[RTYPE], R[RW], R[RH]);
     if(Rule == -1)
       api.MessageBox(format("No rule found for %s of size %i, %i", R[RTYPE], R[RW], R[RH]));
@@ -94,7 +103,7 @@ function PrincessExport() {
     local HI = "H"+Hex(R[RH]-1);
     api.ExportWrite(File, "  "+api.Interpolate(RectRules[Rule].O, "", [PI, RI, WI, HI]));
   }
-  api.ExportWrite(File, "  db LVL_DONE, $00");
+  api.ExportWrite(File, "  db LVL_DONE, "+Hex(StartPos));
 
   api.ExportClose(File);
   api.MessageBox("Exported successfully");
