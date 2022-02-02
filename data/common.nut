@@ -2,7 +2,7 @@ api.ToJSON <- function (Table) {
   if(typeof(Table)!="array" && typeof(Table)!="table")
     return Table.tostring();
   local Out = "";
-  function AsString(Item) {
+  local AsString = function(Item) {
     switch(typeof(Item)) {
       case "table":
       case "array":
